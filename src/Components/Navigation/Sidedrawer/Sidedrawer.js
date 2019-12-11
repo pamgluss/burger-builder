@@ -1,13 +1,13 @@
 import React from 'react';
-import './Sidedrawer.css';
+import classes from './Sidedrawer.module.css';
 
 import Logo from '../../Logo/Logo';
 import NavigationItems from '../NavigationItems/NavigationItems';
 
 const sideDrawer = (props) => {
   return(
-    <div className='SideDrawer'>
-      <div className='sidedrawerLogo'>
+    <div className={classes.SideDrawer}>
+      <div className={classes.Logo}>
         <Logo />
       </div>
 
