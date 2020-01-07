@@ -20,3 +20,10 @@
 .Logo {
   height: 80%;
 }
+
+/* Mobile Devices */
+@media ( max-width: 499px ) {
+  .DesktopOnly {
+    display: none;
+  }
+}

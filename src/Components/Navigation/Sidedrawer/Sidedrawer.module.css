@@ -16,6 +16,7 @@
 
 .Logo {
   height: 10%;
+  margin-bottom: 32px;
 }
 
 @media (min-width: 500px) {
@@ -29,5 +30,5 @@
 }
 
 .Closed {
-  transform: translateX(-100);
+  transform: translateX(-100%);
 }
