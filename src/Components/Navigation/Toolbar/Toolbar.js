@@ -5,8 +5,11 @@ import Logo from '../../Logo/Logo'
 
 import NavigationItems from '../NavigationItems/NavigationItems'
 
+import DrawerToggle from '../Sidedrawer/DrawerToggle/DrawerToggle'
+
 const toolbar = (props) => (
   <header className={classes.Toolbar}>
+    <DrawerToggle clickToggle={props.clickBurgerMenu}/>
     <div className={classes.Logo}>
       <Logo/>
     </div>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import Aux from '../hoc/aux';
 import Toolbar from './Navigation/Toolbar/Toolbar';
@@ -8,7 +9,7 @@ import './Layout.css'
 
 class Layout extends Component {
   state = {
-    showSideDrawer: true
+    showSideDrawer: false
   }
   
   sideDrawerClosedHandler = () => {
@@ -16,11 +17,17 @@ class Layout extends Component {
       showSideDrawer: false
     });
   }
+
+  sideDrawerToggleHandler = () => {
+    this.setState((prevState) => {
+      return { showSideDrawer: !prevState.showSideDrawer };
+    });
+  }
   
   render() {
     return (
       <Aux>
-        <Toolbar/>
+        <Toolbar clickBurgerMenu={this.sideDrawerToggleHandler}/>
         <SideDrawer 
           open={this.state.showSideDrawer}
           closed={this.sideDrawerClosedHandler}
@@ -31,6 +38,9 @@ class Layout extends Component {
       </Aux>
     )
   }
+};
+Layout.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 export default Layout;
