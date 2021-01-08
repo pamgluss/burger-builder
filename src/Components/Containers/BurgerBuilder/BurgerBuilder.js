@@ -1,29 +1,36 @@
 import React, { Component } from 'react';
 import Aux from '../../../hoc/aux';
+import errorHandler from '../../../hoc/errorHandler';
 import Burger from '../../Burger/Burger';
 import BuildControls from '../../Burger/BuildControls/BuildControls';
 import OrderSummary from '../../Burger/OrderSummary/OrderSummary';
 
 import Modal from './../../Layout/Modal/Modal';
+import Spinner from '../../Layout/Spinner/Spinner';
 
-const INGREDIENT_PRICES = {
-  salad: 0.5,
-  cheese: 0.4,
-  meat: 1.7,
-  bacon: 0.5
-}
+import axiosOrder from '../../../axiosOrders';
 
 class BurgerBuilder extends Component {
   state = {
-    ingredients: {
-      salad: 0,
-      bacon: 0,
-      cheese: 0,
-      meat: 0
-    },
+    ingredients: null,
     price: 4,
     purchasable: false,
-    purchasing: false
+    purchasing: false,
+    loading: false,
+    error: false
+  }
+
+  componentDidMount() {
+    axiosOrder.get('/ingredients.json').then((resp) => {
+      console.log(resp.data)
+      this.setState({ ingredients: resp.data})
+    })
+
+    axiosOrder.get('/ingredientPrice.json').then((resp) => {
+      this.setState({ ingredientPrices: resp.data })
+    }).catch(error => {
+      this.setState({ error: true })
+    })
   }
 
   updatePurchaseState = (ingredients) => {
@@ -45,7 +52,7 @@ class BurgerBuilder extends Component {
       ...this.state.ingredients
     };
     updatedIngredients[type] = newCount;
-    const priceAddition = INGREDIENT_PRICES[type]
+    const priceAddition = this.state.ingredientPrices[type]
     const oldPrice = this.state.price;
     const newPrice = oldPrice + priceAddition;
 
@@ -66,7 +73,7 @@ class BurgerBuilder extends Component {
       ...this.state.ingredients
     };
     updatedIngredients[type] = newCount;
-    const priceAddition = INGREDIENT_PRICES[type]
+    const priceAddition = this.state.ingredientPrices[type]
     const oldPrice = this.state.price;
     const newPrice = oldPrice - priceAddition;
 
@@ -92,7 +99,19 @@ class BurgerBuilder extends Component {
   }
 
   puchaseContinueHandler = () => {
-    alert('You continue! TODO');
+    let queryArray = []
+    for (const [key, value] of Object.entries(this.state.ingredients)) {
+      queryArray.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    }
+
+    queryArray.push(`price=${this.state.price}`)
+
+    queryArray = queryArray.join('&');
+    
+    this.props.history.push({
+      pathname: '/order-summary',
+      search: `?${queryArray}`
+    })
   }
 
   render(){
@@ -103,16 +122,12 @@ class BurgerBuilder extends Component {
       disableInfo[key] = disableInfo[key] === 0
     }
 
-    return(
+    let orderSummary = null;
+    let burger = <Spinner/>
+    
+    if(this.state.ingredients && this.state.ingredientPrices) { 
+      burger = (
       <Aux>
-        <Modal show={this.state.purchasing} modalClosed={this.purchaseCanceledHandler}>
-          <OrderSummary 
-            ingredients={this.state.ingredients}
-            price={this.state.price}
-            purchaseCanceled={this.purchaseCanceledHandler}
-            purchaseContinued={this.puchaseContinueHandler}
-          />  
-        </Modal>
         <Burger ingredients={this.state.ingredients}/>
         <BuildControls 
           ingredientAdded={this.addIngredientHandler}
@@ -122,9 +137,29 @@ class BurgerBuilder extends Component {
           purchasable={this.state.purchasable}
           purchased={this.purchaseHandler}
         />
+      </Aux>)
+
+      orderSummary = (<OrderSummary 
+      ingredients={this.state.ingredients}
+      price={this.state.price}
+      purchaseCanceled={this.purchaseCanceledHandler}
+      purchaseContinued={this.puchaseContinueHandler}
+      />)
+    }
+
+    if(this.state.loading ) {
+      orderSummary = <Spinner />
+    }
+
+    return(
+      <Aux>
+        <Modal show={this.state.purchasing} modalClosed={this.purchaseCanceledHandler}>
+          {orderSummary}
+        </Modal>
+        {burger}
       </Aux>
     );
   }
 }
 
-export default BurgerBuilder;
+export default errorHandler(BurgerBuilder, axiosOrder);

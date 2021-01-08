@@ -12,6 +12,10 @@
   transition: all 0.3s ease-out;
 }
 
+.Modal ul {
+  list-style-type: none;
+}
+
 @media (min-width: 600px) {
   .Modal {
       width: 500px;
