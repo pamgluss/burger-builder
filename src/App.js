@@ -3,9 +3,9 @@ import { Route, Switch } from 'react-router-dom'
 
 import './App.css';
 import Layout from './Components/Layout';
-import BurgerBuilder from './Components/Containers/BurgerBuilder/BurgerBuilder';
-import Checkout from './Components/Containers/Checkout/Checkout';
-import Orders from './Components/Containers/Orders/Orders';
+import BurgerBuilder from './Containers/BurgerBuilder/BurgerBuilder';
+import Checkout from './Containers/Checkout/Checkout';
+import Orders from './Containers/Orders/Orders';
 
 function App() {
   return (

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import axios from '../../../axiosOrders';
-import withErrorHandler from '../../../hoc/errorHandler'
+import axios from '../../axiosOrders';
+import withErrorHandler from '../../hoc/errorHandler';
 
-import Order from '../../Order/Order'
+import Order from '../../Components/Order/Order';
 
 class Orders extends Component {
     state = {
