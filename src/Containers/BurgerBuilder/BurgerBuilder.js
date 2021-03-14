@@ -12,7 +12,7 @@ import axiosOrder from '../../axiosOrders';
 
 // Redux imports
 import { connect } from 'react-redux';
-import * as actionTypes from '../../store/actions'
+import * as actions from '../../store/actions/index';
 
 
 class BurgerBuilder extends Component {
@@ -23,15 +23,8 @@ class BurgerBuilder extends Component {
   }
 
   componentDidMount() {
-    axiosOrder.get('/ingredients.json').then((resp) => {
-      this.setState({ ingredients: resp.data})
-    })
-
-    axiosOrder.get('/ingredientPrice.json').then((resp) => {
-      this.setState({ ingredientPrices: resp.data })
-    }).catch(error => {
-      this.setState({ error: true })
-    })
+    this.props.onGetIngredients();
+    this.props.onGetIngredientPrices();
   }
 
   updatePurchaseState = (ingredients) => {
@@ -46,9 +39,17 @@ class BurgerBuilder extends Component {
 
   // Methods for checking out
   purchaseHandler = () => {
-    this.setState({
-      purchasing:true
-    })
+    if (this.props.isAuthenticated){
+      this.setState({
+        purchasing:true
+      })
+    } else {
+      // Allow the user to sign in, then go straight to checkout
+      this.props.onSetRedirectPath('/order-summary')
+      this.props.history.push({
+        pathname: '/auth'
+      })
+    }
   }
 
   purchaseCanceledHandler = () => {
@@ -58,6 +59,7 @@ class BurgerBuilder extends Component {
   }
 
   purchaseContinueHandler = () => {
+    this.props.onPurchaseInit()
     this.props.history.push({
       pathname: '/order-summary'
     })
@@ -85,6 +87,7 @@ class BurgerBuilder extends Component {
           price={this.props.price}
           purchasable={this.updatePurchaseState(this.props.ingredients)}
           purchased={this.purchaseHandler}
+          isAuthed={this.props.isAuthenticated}
         />
       </Aux>)
 
@@ -94,10 +97,6 @@ class BurgerBuilder extends Component {
       purchaseCanceled={this.purchaseCanceledHandler}
       purchaseContinued={this.purchaseContinueHandler}
       />)
-    }
-
-    if(this.state.loading ) {
-      orderSummary = <Spinner />
     }
 
     return(
@@ -113,18 +112,22 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => {
   return {
-      ingredients: state.ingredients,
-      ingredientPrices: state.ingredientPrices,
-      price: state.price
+      ingredients: state.burgerBuilder.ingredients,
+      ingredientPrices: state.burgerBuilder.ingredientPrices,
+      price: state.burgerBuilder.price,
+      error: state.burgerBuilder.error,
+      isAuthenticated: state.auth.token !== null
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-      onGetIngredients: () => dispatch({ type: actionTypes.GET_INGREDIENTS_FROM_DB }),
-      onGetPrice: () => dispatch({ type: actionTypes.GET_PRICE_FROM_DB }),
-      onAddIngredient: (type) => dispatch({ type: actionTypes.ADD_INGREDIENT, ingredientType: type}),
-      onSubtractIngredient: (type) => dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredientType: type }),
+      onAddIngredient: (type) => dispatch(actions.addIngredient(type)),
+      onSubtractIngredient: (type) => dispatch(actions.removeIngredient(type)),
+      onGetIngredients: () => dispatch(actions.getIngredients()),
+      onGetIngredientPrices: () => dispatch(actions.getIngredientPrices()),
+      onPurchaseInit: () => dispatch(actions.purchaseInit()),
+      onSetRedirectPath: (path) => dispatch(actions.setAuthRedirect(path)),
   }
 }
 

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import * as orderActions from '../../../store/actions/';
 
 import Button from '../../../Components/Layout/Button/Button';
-import axiosOrder from '../../../axiosOrders';
 import Spinner from '../../../Components/Layout/Spinner/Spinner';
 import Input from '../../../Components/Layout/Input/Input';
 
@@ -84,7 +84,6 @@ class ContactData extends Component {
 
     orderHandler = (event) => {
         event.preventDefault();
-        this.setState({ loading: true })
 
         const formData = {};
         for(let formElementIdentifier in this.state.orderForm){
@@ -96,23 +95,7 @@ class ContactData extends Component {
             price: this.props.price,
             orderData: formData
         }
-
-        axiosOrder.post('/orders.json', order)
-        .then((resp) => {
-            this.setState({
-            loading: false,
-            purchasing: false
-            })
-
-            // redirect to home when purchase is complete
-            this.props.history.push('/')
-        })
-        .catch((err) => { 
-            this.setState({
-            loading: false,
-            purchasing: false
-            })
-        } );
+        this.props.onAttemptPurchase(order, this.props.token)
     }
 
     inputChangedHandler = (event, inputIdentifier) => {
@@ -182,7 +165,7 @@ class ContactData extends Component {
             <Button buttonType='Success' disabled={!this.state.formIsValid}>ORDER</Button>
         </form>);
 
-        if(this.state.loading){
+        if(this.props.loading){
             form = <Spinner />
         }
         return (
@@ -196,9 +179,17 @@ class ContactData extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingredients: state.ingredients,
-        price: state.price
+        ingredients: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.price,
+        loading: state.order.loading,
+        token: state.auth.token
     };
   }
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = dispatch => {
+    return {
+        onAttemptPurchase: (purchaseData, token) => dispatch(orderActions.purchasingBurger(purchaseData, token)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactData);
