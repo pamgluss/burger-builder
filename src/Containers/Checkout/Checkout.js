@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import * as actions from '../../store/actions/index'
 
 import OrderSummary from '../../Components/Order/OrderSummary/OrderSummary';
 import ContactData from './ContactData/ContactData'

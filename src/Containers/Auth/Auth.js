@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 import * as actions from '../../store/actions/index'
 import { Redirect } from 'react-router-dom';
 
+import { updateObject, checkValidity } from '../../shared/utility'
+
 class Auth extends Component {
     state = {
         authForm: {
@@ -56,39 +58,17 @@ class Auth extends Component {
     }
 
     inputChangedHandler = (event, controlName) => {
-        const updatedControls = {
-            ...this.state.authForm,
-            [controlName]: {
-                ...this.state.authForm[controlName],
+        const updatedControls = updateObject(this.state.authForm, {
+            [controlName]: updateObject(this.state.authForm[controlName], {
                 value: event.target.value,
-                valid: this.checkValidity(event.target.value, this.state.authForm[controlName].validation),
+                valid: checkValidity(event.target.value, this.state.authForm[controlName].validation),
                 beenTouched: true
-            }
-        }
+            })
+        })
 
         this.setState({
             authForm: updatedControls
         })
-    }
-
-    checkValidity = (value, rules) => {
-        // If there are no rules, return early
-        if(!rules){
-            return true;
-        }
-        let isValid = true;
-
-        if(rules.required){
-            isValid = value.trim() !== '' && isValid;
-        }
-        if(rules.minLength){
-            isValid = value.length >= rules.minLength && isValid;
-        }
-        if(rules.maxLength){
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
     }
 
     submissionHandler = (event) => {

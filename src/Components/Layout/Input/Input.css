@@ -27,10 +27,15 @@
     background-color: white;
 }
 
-.Invalid {
-    border: 1 px solid red;
+.InputElement.Invalid {
+    border: 1px solid red;
     background-color: rgb(196, 166, 164);
-    color: white;
+}
+
+.InputElement.Invalid:focus {
+    border: 1px solid red;
+    background-color: rgb(196, 166, 164);
+    color: red;
 }
 
 .invalidWarning {

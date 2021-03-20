@@ -26,6 +26,9 @@ export const authFailure = (error) => {
 * Logs the user out, whether by token timeout or otherwise
 */
 export const logout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('expiryDate')
+    localStorage.removeItem('userId')
     return {
         type: actionTypes.AUTH_LOGOUT
     };
@@ -62,11 +65,14 @@ export const auth = (email, password, signUp) => {
                 password: password,
                 returnSecureToken: true
             }).then(resp => {
-                console.log(resp)
+                const expirationDate = new Date(new Date().getTime() + resp.data.expiresIn * 1000)
+                localStorage.setItem('token', resp.data.idToken)
+                localStorage.setItem('expiryDate', expirationDate)
+                localStorage.setItem('userId', resp.data.localId)
+
                 dispatch(authSuccess(resp.data.idToken, resp.data.localId));
                 dispatch(checkAuthTimeOut(resp.data.expiresIn));
             }).catch(err => {
-                console.log(err.response.data)
                 dispatch(authFailure(err.response.data.error));
             })
     }
@@ -76,5 +82,28 @@ export const setAuthRedirect = (path) => {
     return {
         type: actionTypes.SET_AUTH_REDIRECT,
         path: path
+    }
+}
+
+
+/*
+* Used in app.js to periodically check on our auth status 
+*/
+export const authCheckState = () => {
+    return dispatch => {
+        const token = localStorage.getItem('token')
+        if(!token) {
+            dispatch(logout())
+        } else {
+            const expirationDate = new Date(localStorage.getItem('expiryDate'))
+            if (expirationDate >= new Date()){
+                const userId = localStorage.getItem('userId')
+                dispatch(authSuccess(token, userId));
+                // compare future date in seconds to expiration date in seconds
+                dispatch(checkAuthTimeOut((expirationDate.getTime() - new Date().getTime()) / 1000))
+            } else {
+                dispatch(logout());
+            }
+        }
     }
 }

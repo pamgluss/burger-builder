@@ -6,6 +6,8 @@ import Button from '../../../Components/Layout/Button/Button';
 import Spinner from '../../../Components/Layout/Spinner/Spinner';
 import Input from '../../../Components/Layout/Input/Input';
 
+import { updateObject, checkValidity } from '../../../shared/utility'
+
 import './ContactData.css'
 
 class ContactData extends Component {
@@ -93,23 +95,22 @@ class ContactData extends Component {
         const order = {
             ingredients: this.props.ingredients,
             price: this.props.price,
-            orderData: formData
+            orderData: formData,
+            userId: this.props.userId
         }
         this.props.onAttemptPurchase(order, this.props.token)
     }
 
     inputChangedHandler = (event, inputIdentifier) => {
-        // We have to clone the form in state to prevent making changes to nested objects that would have the same point
-        const updatedOrderForm = { ...this.state.orderForm }
-        // Therefore we must also make a copy of the _nested_ object, again to prevent accidental changes
-        // to the original object.
-        const updatedFormElement = { ...updatedOrderForm[inputIdentifier] }
+        const updatedFormElement = updateObject(this.state.orderForm[inputIdentifier], {
+            value: event.target.value,
+            valid: checkValidity(event.target.value, this.state.orderForm[inputIdentifier].validation),
+            beenTouched: true
+        })
 
-        updatedFormElement.value = event.target.value;
-        updatedFormElement.beenTouched = true;
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation)
-
-        updatedOrderForm[inputIdentifier] = updatedFormElement;
+        const updatedOrderForm = updateObject(this.state.orderForm, {
+            [inputIdentifier]: updatedFormElement
+        })
 
         // Check to see if the whole form has been filled out yet to decide if controls are active
         let formIsValid = true;
@@ -120,26 +121,6 @@ class ContactData extends Component {
             orderForm: updatedOrderForm,
             formIsValid: formIsValid
          })
-    }
-
-    checkValidity = (value, rules) => {
-        // If there are no rules, return early
-        if(!rules){
-            return true;
-        }
-        let isValid = true;
-
-        if(rules.required){
-            isValid = value.trim() !== '' && isValid;
-        }
-        if(rules.minLength){
-            isValid = value.length >= rules.minLength && isValid;
-        }
-        if(rules.maxLength){
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
     }
 
     render() {
@@ -182,7 +163,8 @@ const mapStateToProps = state => {
         ingredients: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.price,
         loading: state.order.loading,
-        token: state.auth.token
+        token: state.auth.token,
+        userId: state.auth.userId
     };
   }
 
