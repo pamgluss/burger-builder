@@ -1,5 +1,4 @@
 import * as actionTypes from './actionTypes';
-import axios from '../../axiosOrders';
 
 // Purchasing a burger @ the contact form
 export const purchasingBurgerLoading = () => {
@@ -10,17 +9,13 @@ export const purchasingBurgerLoading = () => {
 
 /* 
 * Send order to Firebase
+* Fires purchaseBurgerSaga
 */
 export const purchasingBurger = (orderData, token) => {
-    return (dispatch) => {
-        dispatch(purchasingBurgerLoading());
-        axios.post('/orders.json?auth=' + token, orderData)
-        .then((resp) => {
-            dispatch(purchaseBurgerSuccess(resp.data.name, orderData))
-        })
-        .catch((err) => { 
-            dispatch(purchaseBurgerFailure(err))
-        } );
+    return { 
+        type: actionTypes.PURCHASING_BURGER_BY_SAGA,
+        token,
+        orderData
     }
 }
 
@@ -46,21 +41,10 @@ export const purchaseInit = () => {
 
 // List of Orders
 export const getOrders = (token, userId) => {
-    return (dispatch) => { 
-        dispatch(orderLoading());
-        const queryParams = `auth=${token}&orderBy="userId"&equalTo="${userId}"`
-        axios.get('/orders.json?' + queryParams).then(res => {
-        let fetchedOrders = [];
-        for(const key in res.data){
-            fetchedOrders.push({
-                ...res.data[key],
-                id: key
-            })
-        }
-        dispatch(storeOrders(fetchedOrders));
-     }).catch(err => {
-        dispatch(orderErrorOccurred());
-     })
+    return { 
+        type: actionTypes.GET_ORDERS_BY_SAGA,
+        token,
+        userId
     }
 };
 

@@ -1,5 +1,4 @@
 import * as actionTypes from './actionTypes'
-import axios from '../../axiosOrders';
 
 export const addIngredient = (ingredientName) => {
     return {
@@ -16,23 +15,11 @@ export const removeIngredient = (ingredientName) => {
 }
 
 export const getIngredients = () => {
-    return (dispatch) => { 
-        axios.get('/ingredients.json').then((resp) => {
-            dispatch(storeInitializedIngredients(resp.data))
-        }).catch(err => {
-            dispatch(setErrorState())
-        })
-    }
+    return { type: actionTypes.GET_INGREDIENTS_BY_SAGA }
 }
 
 export const getIngredientPrices = () => {
-    return (dispatch) => { 
-        axios.get('/ingredientPrice.json').then((resp) => {
-            dispatch(storeInitializedIngredientPrices(resp.data))
-        }).catch(error => {
-            dispatch(setErrorState())
-        })
-    }
+    return { type: actionTypes.GET_INGREDIENT_PRICES_BY_SAGA }
 }
 
 export const storeInitializedIngredients = (ingredientsData) => {
