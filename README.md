@@ -1,3 +1,6 @@
+## Burger Build Udemy Project
+Live on [S3](http://burger-builder-test.s3-website-us-east-1.amazonaws.com/) and [Firebase](https://udemy-react-dae8e.web.app/)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
