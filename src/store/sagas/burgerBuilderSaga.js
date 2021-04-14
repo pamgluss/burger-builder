@@ -15,7 +15,6 @@ export function* getIngredientPricesSaga(action){
 export function* getIngredientsSaga(action){
     try {
         const response = yield axios.get('/ingredients.json')
-        console.log("hi mom")
         yield put(actions.storeInitializedIngredients(response.data))
     } catch(err){
         yield put(actions.setErrorState())

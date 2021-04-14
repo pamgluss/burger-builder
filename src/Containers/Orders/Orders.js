@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import axios from '../../axiosOrders';
@@ -8,27 +8,25 @@ import * as orderActions from '../../store/actions/index';
 import Order from '../../Components/Order/Order';
 import Spinner from '../../Components/Layout/Spinner/Spinner'
 
-class Orders extends Component {
-    // Only fetch orders 
-    componentDidMount() {
-        this.props.onOrderFetch(this.props.token, this.props.userId)
-    }
+const Orders = (props) => {
+    // Only fetch orders
+    useEffect(() => {
+        props.onOrderFetch(props.token, props.userId)
+      }, [])
 
-    render(){
-        let orders = <Spinner />
-        if(!this.props.loading){
-            // Filtered from the front end but this is subpar, better to filter on the back end
-            let filteredOrders = this.props.orders.filter(order => order.userId === this.props.userId)
-            orders = (
-                filteredOrders.map(order => (
-                    <Order 
-                    key={order.id} 
-                    order={order}/>
-                ))
-            )
-        }
-        return orders;
+    let orders = <Spinner />
+    if(!props.loading){
+        // Filtered from the front end but this is subpar, better to filter on the back end
+        let filteredOrders = props.orders.filter(order => order.userId === props.userId)
+        orders = (
+            filteredOrders.map(order => (
+                <Order 
+                key={order.id} 
+                order={order}/>
+            ))
+        )
     }
+    return orders;
 }
 
 const mapStateToProps = state => {
