@@ -27,15 +27,15 @@ export const BurgerBuilder = (props) => {
     const sum = Object.keys(ingredients).map(igKey => {
       return ingredients[igKey]
     }).reduce((sum, el) => {
-      return sum+el;
-    },0);
+      return sum + el;
+    }, 0);
 
     return sum > 0
   }
 
   // Methods for checking out
   const purchaseHandler = () => {
-    if (props.isAuthenticated){
+    if (props.isAuthenticated) {
       setPurchasingState(true)
     } else {
       // Allow the user to sign in, then go straight to checkout
@@ -60,37 +60,37 @@ export const BurgerBuilder = (props) => {
   const disableInfo = {
     ...props.ingredients
   };
-  for(let key in disableInfo){
+  for (let key in disableInfo) {
     disableInfo[key] = disableInfo[key] === 0
   }
 
   let orderSummary = null;
-  let burger = <Spinner/>
-  
-  if(props.ingredients && props.ingredientPrices) { 
-    burger = (
-    <Aux>
-      <Burger ingredients={props.ingredients}/>
-      <BuildControls 
-        ingredientAdded={props.onAddIngredient}
-        ingredientRemoved={props.onSubtractIngredient}
-        disabled={disableInfo}
-        price={props.price}
-        purchasable={updatePurchaseState(props.ingredients)}
-        purchased={purchaseHandler}
-        isAuthed={props.isAuthenticated}
-      />
-    </Aux>)
+  let burger = <Spinner />
 
-    orderSummary = (<OrderSummary 
-    ingredients={props.ingredients}
-    price={props.price}
-    purchaseCanceled={purchaseCanceledHandler}
-    purchaseContinued={purchaseContinueHandler}
+  if (props.ingredients && props.ingredientPrices) {
+    burger = (
+      <Aux>
+        <Burger ingredients={props.ingredients} />
+        <BuildControls
+          ingredientAdded={props.onAddIngredient}
+          ingredientRemoved={props.onSubtractIngredient}
+          disabled={disableInfo}
+          price={props.price}
+          purchasable={updatePurchaseState(props.ingredients)}
+          purchased={purchaseHandler}
+          isAuthed={props.isAuthenticated}
+        />
+      </Aux>)
+
+    orderSummary = (<OrderSummary
+      ingredients={props.ingredients}
+      price={props.price}
+      purchaseCanceled={purchaseCanceledHandler}
+      purchaseContinued={purchaseContinueHandler}
     />)
   }
 
-  return(
+  return (
     <Aux>
       <Modal show={purchasingState} modalClosed={purchaseCanceledHandler}>
         {orderSummary}
@@ -102,23 +102,23 @@ export const BurgerBuilder = (props) => {
 
 const mapStateToProps = state => {
   return {
-      ingredients: state.burgerBuilder.ingredients,
-      ingredientPrices: state.burgerBuilder.ingredientPrices,
-      price: state.burgerBuilder.price,
-      error: state.burgerBuilder.error,
-      isAuthenticated: state.auth.token !== null
+    ingredients: state.burgerBuilder.ingredients,
+    ingredientPrices: state.burgerBuilder.ingredientPrices,
+    price: state.burgerBuilder.price,
+    error: state.burgerBuilder.error,
+    isAuthenticated: state.auth.token !== null
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-      onAddIngredient: (type) => dispatch(actions.addIngredient(type)),
-      onSubtractIngredient: (type) => dispatch(actions.removeIngredient(type)),
-      onGetIngredients: () => dispatch(actions.getIngredients()),
-      onGetIngredientPrices: () => dispatch(actions.getIngredientPrices()),
-      onPurchaseInit: () => dispatch(actions.purchaseInit()),
-      onSetRedirectPath: (path) => dispatch(actions.setAuthRedirect(path)),
+    onAddIngredient: (type) => dispatch(actions.addIngredient(type)),
+    onSubtractIngredient: (type) => dispatch(actions.removeIngredient(type)),
+    onGetIngredients: () => dispatch(actions.getIngredients()),
+    onGetIngredientPrices: () => dispatch(actions.getIngredientPrices()),
+    onPurchaseInit: () => dispatch(actions.purchaseInit()),
+    onSetRedirectPath: (path) => dispatch(actions.setAuthRedirect(path)),
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(errorHandler(BurgerBuilder, axiosOrder));
+export default connect(mapStateToProps, mapDispatchToProps)(errorHandler(BurgerBuilder, axiosOrder));

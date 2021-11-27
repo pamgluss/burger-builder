@@ -29,7 +29,7 @@ const Auth = (props) =>  {
                 elementType: 'input',
                 elementConfig: {
                     type: 'email',
-                    placeholder: 'Enter your email for signup'
+                    placeholder: 'Enter your email'
                 },
                 value: '',
                 validation: {
@@ -42,7 +42,7 @@ const Auth = (props) =>  {
                 elementType: 'input',
                 elementConfig: {
                     type: 'password',
-                    placeholder: 'Choose a strong password'
+                    placeholder: 'Enter a password'
                 },
                 value: '',
                 validation: {
@@ -134,12 +134,12 @@ const Auth = (props) =>  {
 
     return(
         <div className='Auth'>
-            {authRedirect}
-            {form}
             <Button 
                 buttonType='Danger'
                 clicked={switchAuthModeHandler}>SWITCH TO {authState.isSignUp ? 'SIGN IN' : 'SIGN UP'}
             </Button>
+            {authRedirect}
+            {form}
             {errorMessage}
         </div>
     )
