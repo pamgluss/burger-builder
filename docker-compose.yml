@@ -1,0 +1,22 @@
+version: "3"
+services:
+  burger-builder:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - /usr/app/node_modules/
+      - .:/usr/app/
+  burger-builder-test:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /usr/app/node_modules
+      - .:/usr/app
+    command: ["npm", "run", "test"]

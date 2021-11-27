@@ -1,0 +1,14 @@
+# Specify base image
+FROM node:16.13-alpine3.12
+
+# add working directory
+WORKDIR /usr/app
+
+# Install dependencies
+COPY ./package.json ./
+RUN npm install --legacy-peer-deps
+
+COPY . .
+
+# Run startup command
+CMD ["npm", "run", "start"]
