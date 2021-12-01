@@ -10,3 +10,13 @@ before_install:
 
 script:
   - docker run -e CI=true pgluss/burger-builder npm run test -- --coverage
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "burger-builder"
+  env: "Burgerbuilder-env"
+  bucket_name: "elasticbeanstalk-us-east-1-711223938767"
+  bucket_path: "burger-builder"
+  on:
+    branch: master
