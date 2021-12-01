@@ -2,13 +2,13 @@
 FROM node:16.13-alpine3.12
 
 # add working directory
-WORKDIR /usr/app
+WORKDIR /usr/app/
 
 # Install dependencies
 COPY ./package.json ./
 RUN npm install --legacy-peer-deps
 
-COPY . .
+COPY ./ ./
 
 # Run startup command
 CMD ["npm", "run", "start"]
