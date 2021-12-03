@@ -11,3 +11,14 @@ This project originated from the Udemy React & React Hooks Course. It serves as 
 So this went from being a humble React app hosted on S3 to now having its own deployment pipeline and being dockerized.
 
 I will try to fill out this readme and make this project a better place to grab example code from at some point.
+
+## Local Run Set up
+
+- Install npm
+- Run `npm install` in project directory
+
+## Running the Project
+
+- `npm run start` to run development server
+- `sh docker_entry.sh` to tag and build a new docker container
+- `docker-compose up --build` to build and run a new docker container and run tests
