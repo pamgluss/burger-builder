@@ -14,6 +14,7 @@ RUN npm run build
 
 ## Run Phase
 FROM nginx
+EXPOSE 80
 COPY --from=builder /usr/app/build /usr/share/nginx/html
 
 # nginx starts up automatically
